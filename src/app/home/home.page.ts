@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Player } from '../models/player.interface';
+import { PersistentData } from '../models/persistent-data.interface';
 import { AlertController, ActionSheetController } from '@ionic/angular';
 import { AlertInput } from '@ionic/core';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +15,16 @@ export class HomePage {
   currentRoundIndex: number = 0;
   players: Player[] = [];
 
-  constructor(public alertController: AlertController, public actionSheetController: ActionSheetController) { }
+  constructor(private alertController: AlertController, private actionSheetController: ActionSheetController, private storage: Storage) {
+    storage.get('data').then((data: PersistentData) => {
+      if (data) {
+        this.currentRoundIndex = data.currentRoundIndex;
+        this.players = data.players;
+      }
+    }).catch((err) => {
+      console.log('Cannot read from storage', err);
+    });
+  }
 
   async addPlayer(): Promise<void> {
     const alert = await this.alertController.create({
@@ -31,12 +42,13 @@ export class HomePage {
           cssClass: 'secondary'
         }, {
           text: 'Ok',
-          handler: (result) => {
+          handler: (input) => {
             this.players.push({
-              name: result.playerName,
+              name: input.playerName,
               score: 0
             });
             this.orderPlayerByScore();
+            this.saveData();
           }
         }
       ]
@@ -61,12 +73,13 @@ export class HomePage {
           cssClass: 'secondary'
         }, {
           text: 'Ok',
-          handler: (result) => {
-            for (const playerIndex in result) {
-              this.players[playerIndex].score += Number(result[playerIndex]);
+          handler: (input) => {
+            for (const playerIndex in input) {
+              this.players[playerIndex].score += Number(input[playerIndex]);
             }
             this.orderPlayerByScore();
             this.currentRoundIndex++;
+            this.saveData();
           }
         }
       ]
@@ -92,8 +105,9 @@ export class HomePage {
           cssClass: 'secondary'
         }, {
           text: 'Ok',
-          handler: (result) => {
-            this.players[playerIndex].name = result.playerName;
+          handler: (input) => {
+            this.players[playerIndex].name = input.playerName;
+            this.saveData();
           }
         }
       ]
@@ -118,9 +132,10 @@ export class HomePage {
           cssClass: 'secondary'
         }, {
           text: 'Ok',
-          handler: (result) => {
-            this.players[playerIndex].score += Number(result.score);
+          handler: (input) => {
+            this.players[playerIndex].score += Number(input.score);
             this.orderPlayerByScore();
+            this.saveData();
           }
         }
       ]
@@ -138,6 +153,7 @@ export class HomePage {
         icon: 'trash',
         handler: () => {
           this.players.splice(playerIndex, 1);
+          this.saveData();
         }
       }, {
         text: 'Cambiar nombre',
@@ -171,6 +187,20 @@ export class HomePage {
       }
       return 0;
     });
+  }
+
+  saveData(): void {
+    const data: PersistentData = {
+      currentRoundIndex: this.currentRoundIndex,
+      players: this.players
+    };
+    this.storage.set('data', data);
+  }
+
+  newGame(): void {
+    this.currentRoundIndex = 0;
+    this.players = [];
+    this.storage.remove('data');
   }
 
 }

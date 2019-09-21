@@ -3,13 +3,17 @@
     <div class="ion-text-center">
       <h1 class="animated bounceInDown title">Continentapp</h1>
       <h2>Ronda actual: {{ currentRoundIndex + 1 }} - {{ rounds[currentRoundIndex] }}</h2>
-      <ion-button (click)="addPlayer()" color="light">
+      <ion-button *ngIf="(currentRoundIndex + 1) < rounds.length" (click)="addPlayer()" color="light">
         <ion-icon slot="start" name="person-add"></ion-icon>
         Añadir jugador
       </ion-button>
       <ion-button *ngIf="((currentRoundIndex + 1) < rounds.length) && players.length > 0" (click)="nextRound()" color="light">
         <ion-icon slot="start" name="arrow-forward"></ion-icon>
         Siguiente ronda
+      </ion-button>
+      <ion-button *ngIf="(currentRoundIndex + 1) === rounds.length" (click)="newGame()" color="light">
+        <ion-icon slot="start" name="refresh"></ion-icon>
+        Nueva partida
       </ion-button>
     </div>
     <table>
