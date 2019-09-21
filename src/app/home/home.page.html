@@ -1,22 +1,28 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Continentapp
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
+<ion-content color="dark">
   <div class="ion-padding">
-    <h1>Ronda actual: {{ currentRoundIndex + 1 }} - {{ rounds[currentRoundIndex] }}</h1>
-    <ion-button (click)="addPlayer()">
-      <ion-icon slot="start" name="person-add"></ion-icon>
-      Añadir jugador
-    </ion-button>
-    <ion-button *ngIf="((currentRoundIndex + 1) < rounds.length) && players.length > 0" (click)="nextRound()">
-      <ion-icon slot="start" name="arrow-forward"></ion-icon>
-      Siguiente ronda
-    </ion-button>
-    <h1 *ngFor="let player of players; let playerIndex = index" (click)="selectPlayer(playerIndex)">{{ player.name }} ({{ player.score }})</h1>
+    <div class="ion-text-center">
+      <h1 class="animated bounceInDown title">Continentapp</h1>
+      <h2>Ronda actual: {{ currentRoundIndex + 1 }} - {{ rounds[currentRoundIndex] }}</h2>
+      <ion-button (click)="addPlayer()" color="light">
+        <ion-icon slot="start" name="person-add"></ion-icon>
+        Añadir jugador
+      </ion-button>
+      <ion-button *ngIf="((currentRoundIndex + 1) < rounds.length) && players.length > 0" (click)="nextRound()" color="light">
+        <ion-icon slot="start" name="arrow-forward"></ion-icon>
+        Siguiente ronda
+      </ion-button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Jugador</th>
+          <th>Puntuación</th>
+        </tr>
+        <tr *ngFor="let player of players; let playerIndex = index" class="animated bounceInRight">
+          <td (click)="selectPlayer(playerIndex)">{{ playerIndex + 1 }}. {{ player.name }}</td>
+          <td>{{ player.score }}</td>
+        </tr>
+      </thead>
+    </table>
   </div>
 </ion-content>
