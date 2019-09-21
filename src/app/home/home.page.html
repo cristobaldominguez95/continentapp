@@ -16,7 +16,7 @@
         Nueva partida
       </ion-button>
     </div>
-    <table>
+    <table *ngIf="players.length > 0">
       <thead>
         <tr>
           <th>Jugador</th>
