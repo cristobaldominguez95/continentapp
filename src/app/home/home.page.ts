@@ -28,18 +28,15 @@ export class HomePage {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
+          cssClass: 'secondary'
         }, {
           text: 'Ok',
           handler: (result) => {
             this.players.push({
               name: result.playerName,
-              points: 0
+              score: 0
             });
-            this.orderPlayerByPoints();
+            this.orderPlayerByScore();
           }
         }
       ]
@@ -66,9 +63,9 @@ export class HomePage {
           text: 'Ok',
           handler: (result) => {
             for (const playerIndex in result) {
-              this.players[playerIndex].points += Number(result[playerIndex]);
+              this.players[playerIndex].score += Number(result[playerIndex]);
             }
-            this.orderPlayerByPoints();
+            this.orderPlayerByScore();
             this.currentRoundIndex++;
           }
         }
@@ -78,9 +75,63 @@ export class HomePage {
     await alert.present();
   }
 
-  async selectPlayer(player: Player, playerIndex: number): Promise<void> {
+  async changePlayerName(playerIndex: number): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Cambiar nombre',
+      inputs: [
+        {
+          name: 'playerName',
+          type: 'text',
+          value: this.players[playerIndex].name
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }, {
+          text: 'Ok',
+          handler: (result) => {
+            this.players[playerIndex].name = result.playerName;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async addScore(playerIndex: number): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Añadir puntuación',
+      inputs: [
+        {
+          name: 'score',
+          type: 'number'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }, {
+          text: 'Ok',
+          handler: (result) => {
+            this.players[playerIndex].score += Number(result.score);
+            this.orderPlayerByScore();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async selectPlayer(playerIndex: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
-      header: player.name,
+      header: this.players[playerIndex].name,
       buttons: [{
         text: 'Eliminar jugador',
         role: 'destructive',
@@ -92,13 +143,13 @@ export class HomePage {
         text: 'Cambiar nombre',
         icon: 'person',
         handler: () => {
-          console.log('Share clicked');
+          this.changePlayerName(playerIndex);
         }
       }, {
         text: 'Añadir puntuación',
         icon: 'add-circle-outline',
         handler: () => {
-          console.log('Play clicked');
+          this.addScore(playerIndex);
         }
       }, {
         text: 'Cancelar',
@@ -110,12 +161,12 @@ export class HomePage {
     await actionSheet.present();
   }
 
-  orderPlayerByPoints(): void {
+  orderPlayerByScore(): void {
     this.players.sort((playerA: Player, playerB: Player) => {
-      if (playerA.points > playerB.points) {
+      if (playerA.score > playerB.score) {
         return 1;
       }
-      if (playerA.points < playerB.points) {
+      if (playerA.score < playerB.score) {
         return -1;
       }
       return 0;
