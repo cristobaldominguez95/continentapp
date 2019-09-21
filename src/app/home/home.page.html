@@ -1,14 +1,22 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Ionic Blank
+      Continentapp
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="ion-padding">
-    The world is your oyster.
-    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+    <ion-button (click)="addPlayer()">
+      <ion-icon slot="start" name="person-add"></ion-icon>
+      Añadir jugador
+    </ion-button>
+    <ion-button *ngIf="((currentRoundIndex + 1) < rounds.length) && players.length > 0" (click)="nextRound()">
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      Siguiente ronda
+    </ion-button>
+    <h1>Ronda actual: {{ currentRoundIndex + 1 }} - {{ rounds[currentRoundIndex] }}</h1>
+    <h1 *ngFor="let player of players; let playerIndex = index" (click)="selectPlayer(player, playerIndex)">{{ player.name }} ({{ player.points }})</h1>
   </div>
 </ion-content>
