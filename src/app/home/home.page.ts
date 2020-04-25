@@ -1,25 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Player } from '../models/player.interface';
 import { PersistentData } from '../models/persistent-data.interface';
 import { AlertController, ActionSheetController } from '@ionic/angular';
 import { AlertInput } from '@ionic/core';
-import { Storage } from '@ionic/storage';
+import { Plugins } from '@capacitor/core';
+
+const { Storage } = Plugins;
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+
   rounds: string[] = ['TT', 'ET', 'EE', 'TTT', 'ETT', 'EET', 'EEE'];
   currentRoundIndex: number = 0;
   players: Player[] = [];
 
-  constructor(private alertController: AlertController, private actionSheetController: ActionSheetController, private storage: Storage) {
-    storage.get('data').then((data: PersistentData) => {
-      if (data) {
-        this.currentRoundIndex = data.currentRoundIndex;
-        this.players = data.players;
+  constructor(private alertController: AlertController, private actionSheetController: ActionSheetController) { }
+
+  ngOnInit(): void {
+    Storage.get({ key: 'persistent-data' }).then((data) => {
+      if (data.value) {
+        const parsedData: PersistentData = JSON.parse(data.value);
+        this.currentRoundIndex = parsedData.currentRoundIndex;
+        this.players = parsedData.players;
       }
     }).catch((err) => {
       console.log('Cannot read from storage', err);
@@ -194,13 +200,16 @@ export class HomePage {
       currentRoundIndex: this.currentRoundIndex,
       players: this.players
     };
-    this.storage.set('data', data);
+    Storage.set({
+      key: 'persistent-data',
+      value: JSON.stringify(data)
+    });
   }
 
   newGame(): void {
     this.currentRoundIndex = 0;
     this.players = [];
-    this.storage.remove('data');
+    Storage.remove({ key: 'persistent-data' });
   }
 
 }

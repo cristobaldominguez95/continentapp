@@ -1,32 +1,30 @@
-<ion-content color="dark">
-  <div class="ion-padding">
-    <div class="ion-text-center">
-      <h1 class="animated bounceInDown title">Continentapp</h1>
-      <h2>Ronda actual: {{ currentRoundIndex + 1 }} - {{ rounds[currentRoundIndex] }}</h2>
-      <ion-button *ngIf="(currentRoundIndex + 1) < rounds.length" (click)="addPlayer()" color="light">
-        <ion-icon slot="start" name="person-add"></ion-icon>
-        Añadir jugador
-      </ion-button>
-      <ion-button *ngIf="((currentRoundIndex + 1) < rounds.length) && players.length > 0" (click)="nextRound()" color="light">
-        <ion-icon slot="start" name="arrow-forward"></ion-icon>
-        Siguiente ronda
-      </ion-button>
-      <ion-button *ngIf="(currentRoundIndex + 1) === rounds.length" (click)="newGame()" color="light">
-        <ion-icon slot="start" name="refresh"></ion-icon>
-        Nueva partida
-      </ion-button>
-    </div>
-    <table *ngIf="players.length > 0">
-      <thead>
-        <tr>
-          <th>Jugador</th>
-          <th>Puntuación</th>
-        </tr>
-        <tr *ngFor="let player of players; let playerIndex = index" class="animated bounceInRight">
-          <td (click)="selectPlayer(playerIndex)">{{ playerIndex + 1 }}. {{ player.name }}</td>
-          <td>{{ player.score }}</td>
-        </tr>
-      </thead>
-    </table>
+<ion-content class="ion-padding">
+  <div class="ion-text-center">
+    <h1 class="animated bounceInDown title">Continentapp</h1>
+    <h2>Ronda actual: {{ currentRoundIndex + 1 }} - {{ rounds[currentRoundIndex] }}</h2>
+    <ion-button *ngIf="(currentRoundIndex + 1) < rounds.length" (click)="addPlayer()">
+      <ion-icon slot="start" name="person-add"></ion-icon>
+      Añadir jugador
+    </ion-button>
+    <ion-button *ngIf="((currentRoundIndex + 1) < rounds.length) && players.length > 0" (click)="nextRound()">
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      Siguiente ronda
+    </ion-button>
+    <ion-button *ngIf="(currentRoundIndex + 1) === rounds.length" (click)="newGame()">
+      <ion-icon slot="start" name="refresh"></ion-icon>
+      Nueva partida
+    </ion-button>
   </div>
+  <table *ngIf="players.length > 0">
+    <thead>
+      <tr>
+        <th>Jugador</th>
+        <th>Puntuación</th>
+      </tr>
+      <tr *ngFor="let player of players; let playerIndex = index" class="animated bounceInRight">
+        <td (click)="selectPlayer(playerIndex)">{{ playerIndex + 1 }}. {{ player.name }}</td>
+        <td>{{ player.score }}</td>
+      </tr>
+    </thead>
+  </table>
 </ion-content>
