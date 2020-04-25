@@ -22,7 +22,7 @@
         <th>Puntuación</th>
       </tr>
       <tr *ngFor="let player of players; let playerIndex = index" class="animated bounceInRight">
-        <td (click)="selectPlayer(playerIndex)">{{ playerIndex + 1 }}. {{ player.name }}</td>
+        <td (click)="selectPlayer(player)">{{ playerIndex + 1 }}. {{ player.name }}</td>
         <td>{{ player.score }}</td>
       </tr>
     </thead>
