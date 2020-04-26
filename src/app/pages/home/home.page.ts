@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Player } from '../models/player.interface';
-import { PersistentData } from '../models/persistent-data.interface';
-import { AlertController, ActionSheetController } from '@ionic/angular';
-import { AlertInput } from '@ionic/core';
+import { Player } from '../../models/player.interface';
+import { PersistentData } from '../../models/persistent-data.interface';
+import { AlertController, ActionSheetController, ModalController } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
+import { EnterScorePage } from '../enter-score/enter-score.page';
 
 const { Storage } = Plugins;
 
@@ -18,7 +18,7 @@ export class HomePage implements OnInit {
   currentRoundIndex: number = 0;
   players: Player[] = [];
 
-  constructor(private alertController: AlertController, private actionSheetController: ActionSheetController) { }
+  constructor(private alertController: AlertController, private actionSheetController: ActionSheetController, private modalController: ModalController) { }
 
   ngOnInit(): void {
     Storage.get({ key: 'persistent-data' }).then((data) => {
@@ -64,33 +64,19 @@ export class HomePage implements OnInit {
   }
 
   async nextRound(): Promise<void> {
-    const inputs: AlertInput[] = this.players.map((player: Player, playerIndex: number) => ({
-      type: 'number',
-      name: playerIndex.toString(),
-      placeholder: player.name
-    }));
-    const alert = await this.alertController.create({
-      header: 'Añadir puntuación',
-      inputs,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        }, {
-          text: 'Ok',
-          handler: input => {
-            for (const playerIndex in input) {
-              this.players[playerIndex].score += Number(input[playerIndex]);
-            }
-            this.orderPlayerByScore();
-            this.currentRoundIndex++;
-            this.saveData();
-          }
-        }
-      ]
+    const modal = await this.modalController.create({
+      component: EnterScorePage,
+      componentProps: {
+        players: this.players
+      }
     });
-
-    await alert.present();
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data && data.nextRound) {
+      this.currentRoundIndex++;
+      this.orderPlayerByScore();
+      this.saveData();
+    }
   }
 
   async changePlayerName(player: Player): Promise<void> {

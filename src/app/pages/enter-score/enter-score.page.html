@@ -1,0 +1,22 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Introducir puntuación</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="scoresForm" (ngSubmit)="submitForm()">
+    <ion-list lines="full" class="ion-no-margin ion-no-padding" formArrayName="playerScores">
+      <ion-item *ngFor="let playerControl of playerScores.controls; let index = index">
+        <ion-label position="fixed">{{ players[index].name }}</ion-label>
+        <ion-input [formControlName]="index" type="number"></ion-input>
+      </ion-item>
+    </ion-list>
+  </form>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-button class="btn-submit" expand="full" (click)="submitForm()">Aceptar</ion-button>
+</ion-footer>
