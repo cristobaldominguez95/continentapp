@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Player } from '../../models/player.interface';
 import { PersistentData } from '../../models/persistent-data.interface';
 import { AlertController, ActionSheetController, ModalController } from '@ionic/angular';
-import { Plugins } from '@capacitor/core';
+import { Plugins, PromptResult } from '@capacitor/core';
 import { EnterScorePage } from '../enter-score/enter-score.page';
 
-const { Storage } = Plugins;
+const { Storage, Modals } = Plugins;
 
 @Component({
   selector: 'app-home',
@@ -33,34 +33,20 @@ export class HomePage implements OnInit {
   }
 
   async addPlayer(): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Nombre del jugador',
-      inputs: [
-        {
-          name: 'playerName',
-          type: 'text'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary'
-        }, {
-          text: 'Ok',
-          handler: input => {
-            this.players.push({
-              name: input.playerName,
-              score: 0
-            });
-            this.orderPlayerByScore();
-            this.saveData();
-          }
-        }
-      ]
+    let promptRet: PromptResult = await Modals.prompt({
+      title: 'Introduce el nombre del jugador',
+      message: '',
+      cancelButtonTitle: 'Cancelar'
     });
 
-    await alert.present();
+    if (!promptRet.cancelled) {
+      this.players.push({
+        name: promptRet.value,
+        score: 0,
+      });
+      this.orderPlayerByScore();
+      this.saveData();
+    }
   }
 
   async nextRound(): Promise<void> {
@@ -83,31 +69,17 @@ export class HomePage implements OnInit {
   }
 
   async changePlayerName(player: Player): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Cambiar nombre',
-      inputs: [
-        {
-          name: 'playerName',
-          type: 'text',
-          value: player.name
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary'
-        }, {
-          text: 'Ok',
-          handler: (input) => {
-            player.name = input.playerName;
-            this.saveData();
-          }
-        }
-      ]
+    let promptRet: PromptResult = await Modals.prompt({
+      title: 'Cambiar nombre',
+      message: '',
+      cancelButtonTitle: 'Cancelar',
+      inputText: player.name
     });
 
-    await alert.present();
+    if (!promptRet.cancelled) {
+      player.name = promptRet.value;
+      this.saveData();
+    }
   }
 
   async addScore(player: Player): Promise<void> {
