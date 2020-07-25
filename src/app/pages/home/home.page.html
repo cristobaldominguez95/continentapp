@@ -21,7 +21,11 @@
         <th>Jugador</th>
         <th>Puntuación</th>
       </tr>
-      <tr *ngFor="let player of players; let playerIndex = index" class="animated bounceInRight">
+      <tr
+        *ngFor="let player of players; let playerIndex = index"
+        class="animated"
+        [ngClass]="{ 'bounceInRight': !player.deleted, 'bounceOutRight': player.deleted }"
+      >
         <td (click)="selectPlayer(player)">{{ playerIndex + 1 }}. {{ player.name }}</td>
         <td class="ion-text-center">{{ player.score }}</td>
       </tr>

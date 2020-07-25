@@ -70,8 +70,11 @@ export class HomePage implements OnInit {
         players: this.players
       }
     });
+
     await modal.present();
+
     const { data } = await modal.onDidDismiss();
+
     if (data && data.nextRound) {
       this.currentRoundIndex++;
       this.orderPlayerByScore();
@@ -155,8 +158,7 @@ export class HomePage implements OnInit {
         role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.players = this.players.filter((player: Player) => player !== playerSelected);
-          this.saveData();
+          this.deletePlayer(playerSelected);
         }
       }]
     });
@@ -176,11 +178,21 @@ export class HomePage implements OnInit {
     });
   }
 
+  deletePlayer(playerToDelete: Player): void {
+    playerToDelete.deleted = true;
+
+    setTimeout(() => {
+      this.players = this.players.filter((player: Player) => player !== playerToDelete);
+      this.saveData();
+    }, 700);
+  }
+
   saveData(): void {
     const data: PersistentData = {
       currentRoundIndex: this.currentRoundIndex,
       players: this.players
     };
+
     Storage.set({
       key: 'persistent-data',
       value: JSON.stringify(data)

@@ -11,6 +11,7 @@ import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 export class EnterScorePage implements OnInit {
 
   @Input() players: Player[];
+
   scoresForm: FormGroup = new FormGroup({
     playerScores: this.fb.array([])
   });
@@ -33,6 +34,7 @@ export class EnterScorePage implements OnInit {
     this.playerScores.controls.forEach((control, index) => {
       this.players[index].score += Number(control.value);
     });
+
     this.modalController.dismiss({
       nextRound: true
     });
